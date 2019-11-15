@@ -5,8 +5,12 @@
       <v-card-title v-if="wantsToCreate">Crear nueva nube</v-card-title>
       <v-card-title v-if="wantsToJoin">Unirse a una nube</v-card-title>
       <div v-if="stepOne" class="buttonGroup">
-        <v-btn outlined v-on:click="wantsToCreate = true">Crear una nube de palabras</v-btn>
-        <v-btn outlined v-on:click="wantsToJoin = true">Unirme a una nube de palabras</v-btn>
+        <v-btn color="primary" v-on:click="wantsToCreate = true">
+          <v-icon>mdi-plus</v-icon>Crear una nube de palabras
+        </v-btn>
+        <v-btn color="primary" v-on:click="wantsToJoin = true">
+          <v-icon>mdi-arrow-right</v-icon>Unirme a una nube de palabras
+        </v-btn>
       </div>
       <div v-if="!stepOne" class="roomInput">
         <v-text-field
@@ -47,7 +51,11 @@ export default {
   },
   methods: {
     submitRoom() {
-      if (!this.roomName) return;
+      if (!this.roomName) {
+        this.error = true;
+        this.errorMsg = "Introduce un nombre válido";
+        return;
+      }
       this.loading = true;
       const { roomName } = this;
       if (this.wantsToJoin) socket.emit("JOIN_ROOM", { roomName }, this.next);
