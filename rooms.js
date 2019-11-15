@@ -15,7 +15,7 @@ class Room {
   }
 
   isClient(id) {
-    this.clients.has(id);
+    return this.clients.has(id);
   }
 }
 

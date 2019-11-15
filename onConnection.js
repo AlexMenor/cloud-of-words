@@ -22,8 +22,7 @@ module.exports.onConnection = (socket, io) => {
   socket.on("JOIN_ROOM", (data, callback) => {
     const { roomName } = data;
     if (joinRoom(roomName, id)) {
-      socket.on("WORDS", (data, callback) => {
-        const { words } = data;
+      socket.on("WORDS", (words, callback) => {
         callback(sendWords(roomName, id, words, io));
         quit(roomName, id);
       });

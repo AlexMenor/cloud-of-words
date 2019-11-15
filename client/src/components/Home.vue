@@ -1,28 +1,26 @@
 <template>
   <div class="contentContainer">
-    <v-card id="createJoinCard">
+    <v-card id="createJoinCard" outlined hover shaped :loading="loading">
       <v-card-title v-if="stepOne">¿Qué quieres hacer?</v-card-title>
-      <v-card-title v-if="!stepOne"
-        >Introduce el nombre de la nube</v-card-title
-      >
+      <v-card-title v-if="wantsToCreate">Crear nueva nube</v-card-title>
+      <v-card-title v-if="wantsToJoin">Unirse a una nube</v-card-title>
       <div v-if="stepOne" class="buttonGroup">
-        <v-btn v-on:click="wantsToCreate = true"
-          >Crear una nube de palabras</v-btn
-        >
-        <v-btn v-on:click="wantsToJoin = true"
-          >Unirme a una nube de palabras</v-btn
-        >
+        <v-btn outlined v-on:click="wantsToCreate = true">Crear una nube de palabras</v-btn>
+        <v-btn outlined v-on:click="wantsToJoin = true">Unirme a una nube de palabras</v-btn>
       </div>
       <div v-if="!stepOne" class="roomInput">
         <v-text-field
+          outlined
           v-model="roomName"
+          :error="error"
+          :error-messages="errorMsg"
           placeholder="Nombre de la nube"
         ></v-text-field>
-        <v-btn v-on:click="wantsToCreate = wantsToJoin = false">Atrás</v-btn>
-        <v-btn v-on:click="submitRoom">Go</v-btn>
-        <v-snackbar v-model="error">
-          {{ errorMsg }}
-        </v-snackbar>
+        <v-spacer></v-spacer>
+        <div class="buttonRow">
+          <v-btn outlined v-on:click="wantsToCreate = wantsToJoin = false">Atrás</v-btn>
+          <v-btn outlined v-on:click="submitRoom">Go</v-btn>
+        </div>
       </div>
     </v-card>
   </div>
@@ -49,6 +47,7 @@ export default {
   },
   methods: {
     submitRoom() {
+      if (!this.roomName) return;
       this.loading = true;
       const { roomName } = this;
       if (this.wantsToJoin) socket.emit("JOIN_ROOM", { roomName }, this.next);
@@ -87,6 +86,20 @@ export default {
   align-items: center;
   flex-direction: column;
 }
+@media (max-width: 600px) {
+  #createJoinCard {
+    margin-top: 2em;
+    width: 100%;
+    height: 100%;
+  }
+}
+@media (min-width: 600px) {
+  #createJoinCard {
+    width: 60%;
+    height: 60%;
+    padding: 5em;
+  }
+}
 .buttonGroup {
   margin-top: 0.5em;
   margin-bottom: 1em;
@@ -97,5 +110,9 @@ export default {
 }
 .buttonGroup .v-btn {
   margin: 0.5em;
+}
+.buttonRow {
+  display: flex;
+  justify-content: space-around;
 }
 </style>
