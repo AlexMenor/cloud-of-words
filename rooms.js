@@ -1,28 +1,16 @@
 const rooms = new Map();
 
 class Room {
-  constructor(ownerID) {
+  constructor(ownerID, roomContext) {
     this.ownerID = ownerID;
-    this.clients = new Set();
-  }
-
-  addClient(id) {
-    this.clients.add(id);
-  }
-
-  removeClient(id) {
-    this.clients.delete(id);
-  }
-
-  isClient(id) {
-    return this.clients.has(id);
+    this.roomContext = roomContext;
   }
 }
 
-const createRoom = (roomName, ownderID) => {
+const createRoom = (roomName, ownderID, roomContext) => {
   if (rooms.has(roomName)) return false;
   else {
-    rooms.set(roomName, new Room(ownderID));
+    rooms.set(roomName, new Room(ownderID, roomContext));
     return true;
   }
 };
@@ -31,27 +19,15 @@ const removeRoom = roomName => {
   rooms.delete(roomName);
 };
 
-const joinRoom = (roomName, id) => {
-  if (rooms.has(roomName)) {
-    rooms.get(roomName).addClient(id);
-    return true;
-  } else return false;
+const getContext = roomName => {
+  if (rooms.has(roomName)) return rooms.get(roomName).roomContext;
+  else return false;
 };
 
-const quit = (roomName, id) => {
-  if (rooms.has(roomName)) rooms.get(roomName).removeClient(id);
-};
-
-const getOwnerID = (roomName, id) => {
+const getOwnerID = roomName => {
   const room = rooms.get(roomName);
-  if (room) {
-    if (!room.isClient(id)) return null;
-    else {
-      return room.ownerID;
-    }
-  } else {
-    return null;
-  }
+  if (room) return room.ownerID;
+  else return null;
 };
 
-module.exports = { createRoom, removeRoom, joinRoom, quit, getOwnerID };
+module.exports = { createRoom, removeRoom, getContext, getOwnerID };

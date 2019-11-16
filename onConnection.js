@@ -1,18 +1,12 @@
-const {
-  createRoom,
-  removeRoom,
-  joinRoom,
-  quit,
-  getOwnerID
-} = require("./rooms");
+const { createRoom, removeRoom, getContext, getOwnerID } = require("./rooms");
 
 module.exports.onConnection = (socket, io) => {
   const { id } = socket;
 
   socket.on("CREATE_ROOM", (data, callback) => {
-    const { roomName } = data;
-    if (createRoom(roomName, id)) {
-      socket.on("disconect", () => {
+    const { roomName, roomContext } = data;
+    if (createRoom(roomName, id, roomContext)) {
+      socket.on("disconnect", () => {
         removeRoom(roomName);
       });
       callback(true);
@@ -21,21 +15,19 @@ module.exports.onConnection = (socket, io) => {
 
   socket.on("JOIN_ROOM", (data, callback) => {
     const { roomName } = data;
-    if (joinRoom(roomName, id)) {
+    const context = getContext(roomName);
+    if (context) {
       socket.on("WORDS", (words, callback) => {
-        callback(sendWords(roomName, id, words, io));
-        quit(roomName, id);
+        callback(sendWords(roomName, words, io));
+        socket.disconnect();
       });
-      socket.on("disconnect", () => {
-        quit(roomName, id);
-      });
-      callback(true);
+      callback(context);
     } else callback(false);
   });
 };
 
-const sendWords = (roomName, id, words, io) => {
-  const ownerID = getOwnerID(roomName, id);
+const sendWords = (roomName, words, io) => {
+  const ownerID = getOwnerID(roomName);
   if (ownerID) {
     io.to(ownerID).emit("WORDS", words);
     return true;

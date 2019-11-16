@@ -1,6 +1,6 @@
 <template>
   <div class="contentContainer">
-    <v-card id="createJoinCard" outlined hover shaped :loading="loading">
+    <v-card class="createJoinCard" outlined hover shaped :loading="loading">
       <v-card-title v-if="stepOne">¿Qué quieres hacer?</v-card-title>
       <v-card-title v-if="wantsToCreate">Crear nueva nube</v-card-title>
       <v-card-title v-if="wantsToJoin">Unirse a una nube</v-card-title>
@@ -13,6 +13,12 @@
         </v-btn>
       </div>
       <div v-if="!stepOne" class="roomInput">
+        <v-text-field
+          v-if="wantsToCreate"
+          outlined
+          v-model="roomContext"
+          placeholder="Contexto de la nube "
+        ></v-text-field>
         <v-text-field
           outlined
           v-model="roomName"
@@ -40,6 +46,7 @@ export default {
     wantsToJoin: false,
     wantsToCreate: false,
     roomName: "",
+    roomContext: "",
     loading: false,
     error: false,
     errorMsg: ""
@@ -57,16 +64,17 @@ export default {
         return;
       }
       this.loading = true;
-      const { roomName } = this;
+      const { roomName, roomContext } = this;
       if (this.wantsToJoin) socket.emit("JOIN_ROOM", { roomName }, this.next);
       else if (this.wantsToCreate)
-        socket.emit("CREATE_ROOM", { roomName }, this.next);
+        socket.emit("CREATE_ROOM", { roomName, roomContext }, this.next);
     },
     next(res) {
       this.loading = false;
       if (res) {
         if (this.wantsToCreate) this.$router.push("/getcloud");
-        if (this.wantsToJoin) this.$router.push("/putwords");
+        if (this.wantsToJoin)
+          this.$router.push({ path: "/putwords", query: { context: res } });
       } else {
         this.roomName = "";
         this.error = true;
@@ -88,21 +96,21 @@ export default {
   height: 60%;
   flex-direction: column;
 }
-#createJoinCard {
+.createJoinCard {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
-@media (max-width: 600px) {
-  #createJoinCard {
+@media (max-width: 650px) {
+  .createJoinCard {
     margin-top: 2em;
-    width: 100%;
+    width: 93%;
     height: 100%;
   }
 }
-@media (min-width: 600px) {
-  #createJoinCard {
+@media (min-width: 650px) {
+  .createJoinCard {
     width: 60%;
     height: 60%;
     padding: 5em;
