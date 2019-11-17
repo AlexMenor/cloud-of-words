@@ -72,7 +72,11 @@ export default {
     next(res) {
       this.loading = false;
       if (res) {
-        if (this.wantsToCreate) this.$router.push("/getcloud");
+        if (this.wantsToCreate)
+          this.$router.push({
+            path: "/getcloud",
+            query: { context: this.roomContext }
+          });
         if (this.wantsToJoin)
           this.$router.push({ path: "/putwords", query: { context: res } });
       } else {

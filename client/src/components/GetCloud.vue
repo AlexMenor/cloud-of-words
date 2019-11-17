@@ -7,6 +7,8 @@
           weight > 10 ? 'DeepPink' : weight > 5 ? 'RoyalBlue' : 'Indigo'
       "
       font-family="Roboto"
+      animation-easing="ease-in-out"
+      :animation-duration="500"
     />
   </div>
 </template>
