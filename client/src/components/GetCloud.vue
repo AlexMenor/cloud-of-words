@@ -1,5 +1,9 @@
 <template>
   <div class="contentContainer">
+    <v-card v-if="wordsSorted.length == 0" class="createJoinCard" outlined hover shaped>
+      <v-card-title>Esperando respuestas</v-card-title>
+      <v-progress-circular indeterminate color="primary" :size="50"></v-progress-circular>
+    </v-card>
     <vue-word-cloud
       :words="wordsSorted"
       :color="
