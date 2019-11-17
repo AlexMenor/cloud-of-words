@@ -3,7 +3,7 @@ const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 const path = require("path");
-if (process.env.NODE_ENV != "PRODUCTION") require("dotenv").config();
+if (process.env.NODE_ENV != "production") require("dotenv").config();
 
 const { onConnection } = require("./onConnection");
 
